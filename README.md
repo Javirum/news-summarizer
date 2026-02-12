@@ -1,27 +1,33 @@
 # News Summarizer
 
-A multi-provider news summarizer that fetches top headlines from [NewsAPI](https://newsapi.org/) and uses both OpenAI and Anthropic LLMs to generate summaries and sentiment analysis, with built-in cost tracking, rate limiting, and fallback support.
+A multi-provider news summarizer that fetches top headlines from [NewsAPI](https://newsapi.org/) and uses both OpenAI and Anthropic LLMs to generate summaries and sentiment analysis, with built-in cost tracking, rate limiting, fallback support, and a FastAPI web interface.
 
 ## What It Does
 
-1. **Fetches news articles** from NewsAPI by category (technology, business, health, general)
+1. **Fetches news articles** from NewsAPI by category (`technology`, `business`, `health`, `general`)
 2. **Summarizes each article** in 2-3 sentences using OpenAI (`gpt-4o-mini`)
 3. **Analyzes sentiment** of each summary using Anthropic (`claude-sonnet-4-20250514`)
-4. **Tracks costs** per request and enforces a configurable daily budget
-5. **Falls back** to the secondary provider if the primary one fails
-6. Supports both **synchronous** and **async** (concurrent) processing modes
+4. **Stores processed results** in a local database for later search and analysis
+5. **Tracks costs** per request and enforces a configurable daily budget
+6. **Falls back** to a secondary provider when the primary one fails
+7. Supports both **CLI workflows** and a **web dashboard** (FastAPI + Jinja templates)
 
 ## Project Structure
 
 ```
 news-summarizer/
-├── main.py            # CLI entry point (interactive prompts)
-├── config.py          # Configuration & environment variable loading
-├── news_api.py        # NewsAPI client with rate limiting
-├── llm_providers.py   # OpenAI + Anthropic clients, cost tracker, fallback logic
-├── summarizer.py      # Sync & async summarization pipeline
-├── test_summarizer.py # Unit tests (pytest)
-├── requirements.txt   # Python dependencies
+├── main.py                 # CLI entry point (interactive prompts)
+├── webapp.py               # FastAPI app (dashboard + fetch + trends pages)
+├── config.py               # Configuration & environment variable loading
+├── news_api.py             # NewsAPI client with rate limiting
+├── llm_providers.py        # OpenAI + Anthropic clients, cost tracker, fallback logic
+├── summarizer.py           # Sync & async summarization pipeline
+├── database.py             # SQLite persistence and search helpers
+├── cache.py                # Response caching utilities
+├── templates/              # Jinja templates for the web app
+├── static/style.css        # Web app styles
+├── test_summarizer.py      # Unit tests (pytest)
+├── requirements.txt        # Python dependencies
 └── .gitignore
 ```
 
@@ -72,7 +78,7 @@ You can get API keys from:
 
 ## How to Run
 
-### Interactive mode
+### CLI mode (interactive)
 
 ```bash
 python main.py
@@ -82,6 +88,20 @@ You will be prompted for:
 - News category (`technology`, `business`, `health`, `general`)
 - Number of articles (1-10)
 - Whether to use async processing
+
+### Web app mode (FastAPI)
+
+```bash
+uvicorn webapp:app --reload
+```
+
+Then open `http://127.0.0.1:8000`.
+
+Web routes:
+- `/` article list + search
+- `/article/{id}` article detail page
+- `/fetch` fetch/process new articles from a form
+- `/trends` sentiment/source/date trend dashboard
 
 ### Run individual modules
 
