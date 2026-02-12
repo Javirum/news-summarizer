@@ -3,6 +3,7 @@ import asyncio
 from news_api import NewsAPI
 from llm_providers import LLMProviders
 from cache import ResponseCache
+from database import ArticleDatabase
 
 
 class NewsSummarizer:
@@ -12,6 +13,7 @@ class NewsSummarizer:
         self.news_api = NewsAPI()
         self.llm_providers = LLMProviders()
         self.cache = ResponseCache()
+        self.db = ArticleDatabase()
 
     def summarize_article(self, article):
         """
@@ -109,6 +111,9 @@ Be concise (2-3 sentences)."""
                 print(f"Failed to process article: {e}")
                 # Continue with next article
 
+        if results:
+            self.db.save_articles(results)
+
         return results
 
     def generate_report(self, results):
@@ -147,6 +152,12 @@ Be concise (2-3 sentences)."""
         print(f"Cache hits: {cache_stats.hits}")
         print(f"Cache misses: {cache_stats.misses}")
         print(f"Hit rate: {cache_stats.hit_rate:.1f}%")
+        print("=" * 80)
+
+        # Database summary
+        print("\nDB SUMMARY")
+        print("=" * 80)
+        print(f"Total articles in database: {self.db.count()}")
         print("=" * 80)
 
 

@@ -28,6 +28,9 @@ class Config:
     # Cache
     CACHE_DIR = os.getenv("CACHE_DIR", ".cache")
 
+    # Database
+    DB_PATH = os.getenv("DB_PATH", "news_summarizer.db")
+
     # Cost Control
     DAILY_BUDGET = float(os.getenv("DAILY_BUDGET", "5.00"))
 
