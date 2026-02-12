@@ -2,6 +2,7 @@
 import asyncio
 from news_api import NewsAPI
 from llm_providers import LLMProviders
+from cache import ResponseCache
 
 
 class NewsSummarizer:
@@ -10,6 +11,7 @@ class NewsSummarizer:
     def __init__(self):
         self.news_api = NewsAPI()
         self.llm_providers = LLMProviders()
+        self.cache = ResponseCache()
 
     def summarize_article(self, article):
         """
@@ -22,6 +24,12 @@ class NewsSummarizer:
             Dictionary with summary and sentiment
         """
         print(f"\nProcessing: {article['title'][:60]}...")
+
+        # Check cache
+        cached = self.cache.get(article['url'])
+        if cached is not None:
+            print("  -> Cache HIT - skipping LLM calls")
+            return cached
 
         # Prepare text for summarization
         article_text = f"""Title: {article['title']}
@@ -67,7 +75,7 @@ Be concise (2-3 sentences)."""
             # If sentiment fails, use a fallback
             sentiment = "Unable to analyze sentiment"
 
-        return {
+        result = {
             "title": article['title'],
             "source": article['source'],
             "url": article['url'],
@@ -75,6 +83,11 @@ Be concise (2-3 sentences)."""
             "sentiment": sentiment,
             "published_at": article['published_at']
         }
+
+        # Store in cache
+        self.cache.set(article['url'], result)
+
+        return result
 
     def process_articles(self, articles):
         """
@@ -125,6 +138,15 @@ Be concise (2-3 sentences)."""
         print(f"  Input: {summary['total_input_tokens']:,}")
         print(f"  Output: {summary['total_output_tokens']:,}")
         print(f"Average cost per request: ${summary['average_cost']:.6f}")
+        print("=" * 80)
+
+        # Cache summary
+        cache_stats = self.cache.stats
+        print("\nCACHE SUMMARY")
+        print("=" * 80)
+        print(f"Cache hits: {cache_stats.hits}")
+        print(f"Cache misses: {cache_stats.misses}")
+        print(f"Hit rate: {cache_stats.hit_rate:.1f}%")
         print("=" * 80)
 
 
