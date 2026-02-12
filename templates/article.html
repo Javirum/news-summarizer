@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}{{ article.title if article else "Not Found" }} — News Summarizer{% endblock %}
+{% block content %}
+{% if article %}
+<hgroup>
+    <h2>{{ article.title }}</h2>
+    <p>{{ article.source }} &mdash; {{ article.published_at[:10] if article.published_at else "Unknown date" }}</p>
+</hgroup>
+
+<article>
+    <h3>Summary</h3>
+    <p>{{ article.summary }}</p>
+</article>
+
+<article>
+    <h3>Sentiment Analysis</h3>
+    <p><span class="badge badge-{{ article.sentiment | extract_sentiment }}">{{ article.sentiment | extract_sentiment }}</span></p>
+    <p>{{ article.sentiment }}</p>
+</article>
+
+<p>
+    <a href="{{ article.url }}" target="_blank" rel="noopener">Read original article</a>
+    &middot;
+    <a href="/">Back to articles</a>
+</p>
+{% else %}
+<h2>Article not found</h2>
+<p><a href="/">Back to articles</a></p>
+{% endif %}
+{% endblock %}

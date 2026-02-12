@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Trends — News Summarizer{% endblock %}
+{% block content %}
+<h2>Trend Analysis</h2>
+
+{% if total == 0 %}
+<p>No articles yet. <a href="/fetch">Fetch some articles</a> to see trends.</p>
+{% else %}
+
+<h3>Sentiment Distribution</h3>
+<figure>
+    <table>
+        <thead>
+            <tr><th>Sentiment</th><th>Count</th><th>%</th><th></th></tr>
+        </thead>
+        <tbody>
+            {% for label, count in sentiment_counts.items() %}
+            <tr>
+                <td><span class="badge badge-{{ label }}">{{ label }}</span></td>
+                <td>{{ count }}</td>
+                <td>{{ (count * 100 / total) | round(1) }}%</td>
+                <td><div class="bar bar-{{ label }}" style="width: {{ (count * 100 / max_sentiment) | round }}%">&nbsp;</div></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</figure>
+
+<h3>Articles by Source</h3>
+<figure>
+    <table>
+        <thead>
+            <tr><th>Source</th><th>Count</th><th></th></tr>
+        </thead>
+        <tbody>
+            {% for src, count in source_counts.items() %}
+            <tr>
+                <td>{{ src }}</td>
+                <td>{{ count }}</td>
+                <td><div class="bar bar-source" style="width: {{ (count * 100 / max_source) | round }}%">&nbsp;</div></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</figure>
+
+<h3>Articles Over Time</h3>
+<figure>
+    <table>
+        <thead>
+            <tr><th>Date</th><th>Count</th><th></th></tr>
+        </thead>
+        <tbody>
+            {% for day, count in date_counts.items() %}
+            <tr>
+                <td>{{ day }}</td>
+                <td>{{ count }}</td>
+                <td><div class="bar bar-timeline" style="width: {{ (count * 100 / max_date) | round }}%">&nbsp;</div></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</figure>
+
+{% endif %}
+{% endblock %}

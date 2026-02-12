@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Fetch Articles — News Summarizer{% endblock %}
+{% block content %}
+<h2>Fetch New Articles</h2>
+
+{% if result %}
+<article>
+    <p>Fetched and processed <strong>{{ result.count }}</strong> article(s) from <strong>{{ result.category }}</strong>.</p>
+    <a href="/" role="button">View articles</a>
+</article>
+{% endif %}
+
+<form method="post" action="/fetch">
+    <label for="category">Category</label>
+    <select id="category" name="category">
+        <option value="technology">Technology</option>
+        <option value="business">Business</option>
+        <option value="health">Health</option>
+        <option value="general">General</option>
+    </select>
+
+    <label for="num_articles">Number of articles (1-10)</label>
+    <input type="number" id="num_articles" name="num_articles" value="3" min="1" max="10">
+
+    <button type="submit">Fetch &amp; Process</button>
+</form>
+{% endblock %}

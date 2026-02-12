@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}News Summarizer{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <nav class="container">
+        <ul>
+            <li><strong>News Summarizer</strong></li>
+        </ul>
+        <ul>
+            <li><a href="/">Articles</a></li>
+            <li><a href="/trends">Trends</a></li>
+            <li><a href="/fetch">Fetch New</a></li>
+        </ul>
+    </nav>
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+    <footer class="container">
+        <small>News Summarizer &mdash; Multi-Provider Edition</small>
+    </footer>
+</body>
+</html>
